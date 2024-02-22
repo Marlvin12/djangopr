@@ -1,0 +1,368 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Homepage</title>
+    <link rel="stylesheet" href="{% static 'myapp/styles.css' %}">
+    <style>
+        body {
+            font-family: 'Segoe UI', Roboto, Oxygen-Sans, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            background-color: #edf2f7;
+        }
+
+        #upload-section {
+            background-image: url("{% static 'myapp/images/b.png' %}");
+            background-size: cover;
+            background-position: center;
+            padding: 3rem 0;
+            margin-top: 2rem;
+        }
+
+        .form-container {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+            margin: auto;
+            width: 100%;
+            max-width: 400px;
+        }
+
+        h2 {
+            color: #2a4365;
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+
+        .file-input {
+            border: 2px solid #cbd5e0;
+            padding: 0.5rem 1rem;
+            border-radius: 0.25rem;
+            width: 100%;
+            margin-bottom: 1rem;
+            font-size: 0.875rem;
+            color: #4a5568;
+        }
+
+        .submit-button {
+            display: block;
+            width: 100%;
+            padding: 0.75rem 1rem;
+            background-color: #4c51bf;
+            color: white;
+            border: none;
+            border-radius: 0.25rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .submit-button:hover,
+        .submit-button:focus {
+            background-color: #434190;
+            outline: none;
+        }
+
+        nav {
+            background-color: #667eea;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <nav class="bg-gradient-to-r from-indigo-500 to-indigo-700 py-4 shadow-lg">
+        <div class="container mx-auto px-4 flex justify-between items-center">
+            <a href="#" class="font-bold text-2xl">Slim Panda</a>
+        </div>
+    </nav>
+
+    <div id="upload-section" class="container mx-auto flex justify-center items-center">
+        <div class="form-container">
+            <h2>Upload CSV File</h2>
+            <form method="post" enctype="multipart/form-data" class="space-y-4">
+                {% csrf_token %}
+                <input type="file" name="file" id="file" class="file-input">
+                <button type="submit" name="submit" id="submit" class="submit-button">
+                    Submit
+                </button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
+
+ <div class="m-10">
+        <h3 class="text-2xl font-bold text-indigo-600">Property Stats</h3>
+        <div class="mt-4 flex justify-center">
+            <div class="w-full">
+                <div class="shadow-md rounded-lg overflow-hidden">
+                    <table id="table" class="min-w-full bg-white">
+                        <thead class="bg-gray-100">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Property name</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Price</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Rent</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Emi</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tax</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Monthly Expense</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Net Expenses</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Net Income</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-200">
+                            {% for object in  data_objects %}
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ object.name }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-green-500">{{ object.price }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-green-500">{{ object.rent }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-red-500">{{ object.emi }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-red-500">{{ object.tax }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-red-500">{{ object.exp }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-red-500">{{ object.expenses_monthly }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-green-500">{{ object.income_monthly }}</td>
+                            </tr>
+                            {% endfor %}
+                            <tr class="bg-gray-50">
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">Total</td>
+                                <td id="totalPrice" class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">0</td>
+                                <td id="totalRent" class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">0</td>
+                                <td id="totalEmi" class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">0</td>
+                                <td id="totalTax" class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">0</td>
+                                <td id="totalExp" class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">0</td>
+                                <td id="totalExpense" class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">0</td>
+                                <td id="totalIncome" class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">0</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="flex gap-8 m-10">
+        <div class="w-1/2">
+            <div class="text-indigo-600 font-bold">Income Chart</div>
+            <div>
+                <canvas id="incomeChart" width="400" height="400"></canvas>
+            </div>
+        </div>
+        <div class="w-1/2">
+            <div class="text-indigo-600 font-bold">Expense Chart</div> 
+            <div>
+                <canvas id="expenseChart" width="400" height="400"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="flex gap-8 m-10">
+        <div class="w-1/2">
+            <div class="text-indigo-600 font-bold">Expense Spread Chart</div>
+            <div>
+                <canvas id="expenseSpreadChart" width="400" height="400"></canvas>
+            </div>
+        </div>
+        <div class="w-1/2">
+            <div class="text-indigo-600 font-bold">Income Spread Chart</div> 
+            <div>
+                <canvas id="incomeSpreadChart" width="400" height="400"></canvas>
+            </div>
+        </div>
+    </div>
+    
+    
+    </br>
+    <script>
+        // Get the table element
+        const table = document.getElementById("table");
+
+        // Initialize variables to hold the totals
+        let total_prices = 0;
+        let total_rent = 0;
+        let total_emi = 0;
+        let total_tax = 0;
+        let total_exp = 0;
+        let total_monthly_expenses = 0;
+        let total_monthly_income = 0;
+        let property=""
+
+        // Initialize an array to hold net monthly incomes for the chart
+        let net_incomes = [];
+        let properties=[];
+        let net_monthly_expenses=[];
+
+        let net_emis= [];
+        let net_taxes= [];
+        let net_exps= [];
+
+        // Iterate over the table rows and calculate the totals and net incomes
+        for (let i = 1; i < table.rows.length; i++) {
+            let net_price = parseInt(table.rows[i].cells[1].innerText);
+            let net_rent = parseInt(table.rows[i].cells[2].innerText);
+            let net_emi = parseInt(table.rows[i].cells[3].innerText);
+            let net_tax = parseInt(table.rows[i].cells[4].innerText);
+            let net_exp = parseInt(table.rows[i].cells[5].innerText);
+            let net_monthly_expense = parseInt(table.rows[i].cells[6].innerText);
+            let net_monthly_income = parseInt(table.rows[i].cells[7].innerText);
+            property=table.rows[i].cells[0].innerText;
+            
+
+            // Add to the total values
+            total_prices += net_price;
+            total_rent += net_rent;
+            total_emi += net_emi;
+            total_tax += net_tax;
+            total_exp += net_exp;
+            total_monthly_expenses += net_monthly_expense;
+            total_monthly_income += net_monthly_income;
+
+            // Push the net monthly income to the net_incomes array for the chart
+            net_incomes.push(net_monthly_income);
+            properties.push(property);
+            net_monthly_expenses.push(net_monthly_expense);
+            net_emis.push(net_emi);
+            net_taxes.push(net_tax);
+            net_exps.push(net_exp);
+        
+        }
+
+        // Update the totals in the table
+        document.getElementById("totalPrice").innerText = total_prices;
+        document.getElementById("totalRent").innerText = total_rent;
+        document.getElementById("totalEmi").innerText = total_emi;
+        document.getElementById("totalTax").innerText = total_tax;
+        document.getElementById("totalExp").innerText = total_exp;
+        document.getElementById("totalExpense").innerText = total_monthly_expenses;
+        document.getElementById("totalIncome").innerText = total_monthly_income;
+
+        // Now that net_incomes is populated, create the chart
+        const ctx = document.getElementById('incomeChart').getContext('2d');
+        const incomeChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: properties,
+                datasets: [{
+                    label: 'Income in dollars',
+                    data: net_incomes,
+                    backgroundColor: [
+                        'rgb(75, 192, 192,1)',
+                        'rgb(75, 192, 192,1)',
+                        'rgb(75, 192, 192,1)',
+                        'rgb(75, 192, 192,1)',
+                        'rgb(75, 192, 192,1)',
+                        
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+        const ctx2 = document.getElementById('expenseChart').getContext('2d');
+        const expenseChart = new Chart(ctx2, {
+            type: 'bar',
+            data: {
+                labels: properties,
+                datasets: [{
+                    label: 'Expenses in dollars',
+                    data: net_monthly_expenses,
+                    backgroundColor: [
+                        'rgb(255, 99, 132,1)',
+                        'rgb(255, 99, 132,1)',
+                        'rgb(255, 99, 132,1)',
+                        'rgb(255, 99, 132,1)',
+                        'rgb(255, 99, 132,1)',
+                        
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+        const ctx3 = document.getElementById('expenseSpreadChart').getContext('2d');
+        const expenseSpreadChart = new Chart(ctx3, {
+            type: 'bar',
+            data: {
+                labels: properties,
+                datasets: [{
+                    label: 'Monthly EMI',
+                    data: net_emis,
+                    backgroundColor: [
+                    'rgba(255, 159, 64, 1)',      
+                    ],
+                    borderWidth: 1
+                },{
+                    label: 'Monthly Taxes',
+                    data: net_taxes,
+                    backgroundColor: [
+                    'rgba(54, 162, 235, 1)',      
+                    ],
+                    borderWidth: 1
+                },{
+                    label: 'Monthly Other Expenses',
+                    data: net_exps,
+                    backgroundColor: [
+                    'rgba(153, 102, 255, 1)',      
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+        const ctx4 = document.getElementById('incomeSpreadChart').getContext('2d');
+        const incomeSpreadChart = new Chart(ctx4, {
+            type: 'doughnut',
+            data: {
+                labels: properties,
+                datasets: [{
+                    label: 'Income in dollars',
+                    data: net_incomes,
+                    backgroundColor: [
+                        'rgb(75, 192, 192,1)',
+                        'rgb(255, 99, 132,1)',
+                        'rgb(54, 162, 235,1)',
+                        'rgb(255, 205, 86,1)',
+                        'rgba(153, 102, 255, 1)',
+                        'rgba(255, 159, 64, 1)',     
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
